@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
-
+from django.db.models import JSONField
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 USER_TYPE_CHOICES = (
     ('customer', 'Customer'),
@@ -76,7 +78,31 @@ class Product(models.Model):
         if self.price <= 0:
             raise ValidationError("Price must be greater than zero.")
 
+class Cart(models.Model):
+    products = JSONField(default=list, blank=True)
+    userId = models.ForeignKey("shop.Custom_User", verbose_name=("User ID"), on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return str(self.userId) + " Cart"
+    
+    class Meta:
+        verbose_name = ("Cart")
+        verbose_name_plural = ("Carts")
+    
+    def clean(self):
+        for product in self.products:
+            if product['quantity'] <= 0:
+                raise ValidationError("Quantity must be greater than zero.")
+            
+# Signal to create a new cart for a new customer user
+@receiver(post_save, sender=Custom_User)
+def create_cart_for_new_customer(sender, instance, created, **kwargs):
+    print("Signal called")
+    if created and instance.userType == 'customer':
+        cart = Cart.objects.create(userId=instance)
+        cart.save()
 
 
 

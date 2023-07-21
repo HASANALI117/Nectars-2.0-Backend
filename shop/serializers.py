@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product, Shop, Custom_User
+from .models import Product, Shop, Custom_User, Cart
 
 from djoser.serializers import UserCreateSerializer
 
@@ -22,4 +22,9 @@ class ProductSerializer(serializers.ModelSerializer):
 class Custom_UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Custom_User
+        fields = '__all__'
+
+class CartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cart
         fields = '__all__'

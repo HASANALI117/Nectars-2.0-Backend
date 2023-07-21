@@ -10,6 +10,12 @@ urlpatterns = [
     path('users/', views.Custom_UserList.as_view()),
     path('users/<int:pk>/', views.Custom_UserDetail.as_view()),
     path('username/', views.username.as_view()),
+    path('carts/', views.CartList.as_view()),
+    path('carts/<int:pk>/', views.CartDetail.as_view()),
+    path('userCart/', views.UserCartDetail.as_view()),
+    path('addToCart/', views.AddToCart.as_view()),
+    path('removeFromCart/', views.RemoveFromCart.as_view()),
+    path('updateCart/', views.UpdateCart.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
