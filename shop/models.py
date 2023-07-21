@@ -11,7 +11,7 @@ USER_TYPE_CHOICES = (
 
 #extend the user model
 class Custom_User(AbstractUser):
-    userType=models.CharField(max_length=20,default='admin',choices=USER_TYPE_CHOICES,verbose_name='User Type')
+    userType=models.CharField(max_length=20,default='customer',choices=USER_TYPE_CHOICES,verbose_name='User Type')
     shopId=models.ForeignKey("shop.Shop", verbose_name="Shop ID", on_delete=models.CASCADE, null=True, blank=True)
 
     def save(self, *args, **kwargs):

@@ -31,12 +31,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework_simplejwt',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'djoser',
     'shop'
 ]
 
@@ -106,6 +109,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL ='shop.Custom_User'
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -128,3 +137,26 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Djoser Settings
+AUTHENTICATION_CLASSES = (
+    'djoser.authentication.BearerTokenAuthentication',  # This allows using Bearer token for API endpoints
+)
+
+DJOSER = {
+    'SERIALIZERS': {
+        'user_create': 'shop.serializers.CustomUserCreateSerializer',
+    },
+    'PERMISSIONS': {
+        'user_create': ['rest_framework.permissions.AllowAny'],
+    },
+}
+
+from datetime import timedelta
+
+# JWT Settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Customize the token expiration as needed
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),  # Customize the refresh token expiration as needed
+    'SLIDING_TOKEN_REFRESH_EXPIRATION': False,
+}
