@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField
@@ -43,6 +43,26 @@ class Shop(models.Model):
         verbose_name = ("Shop")
         verbose_name_plural = ("Shops")
 
+class Category(models.Model):
+    categoryId = models.AutoField(primary_key=True)
+    name = models.CharField(
+        max_length=100, unique=True, 
+        verbose_name=("Category Name"), 
+        error_messages={'unique':"This category name is already taken.", 'required':"This field is required."},
+        )
+    description = models.CharField(
+        max_length=100,
+        verbose_name=("Description"),
+        error_messages={'required':"This field is required."},
+        )
+    shopId = models.ForeignKey("shop.Shop", verbose_name=("Shop ID"), on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = ("Category")
+        verbose_name_plural = ("Categories")
 
 class Product(models.Model):
     productId = models.AutoField(primary_key=True, verbose_name=("Product ID"))
@@ -63,6 +83,7 @@ class Product(models.Model):
         error_messages={'required':"price field is required."},
         )
     shopId = models.ForeignKey("shop.Shop", verbose_name=("Shop ID"), on_delete=models.CASCADE)
+    categoryId = models.ForeignKey("shop.Category", verbose_name=("Category ID"), on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -104,5 +125,20 @@ def create_cart_for_new_customer(sender, instance, created, **kwargs):
         cart = Cart.objects.create(userId=instance)
         cart.save()
 
+# # Signal to create a new shop for a new shop owner user
+# @receiver(post_save, sender=Custom_User)
+# def create_shop_for_new_shop_owner(sender, instance, created, **kwargs):
+#     if created and instance.userType == 'shop_owner':
+#         with transaction.atomic():
+#             shop = Shop.objects.create(shopOwner=instance)
+#             instance.shopId = shop.shopId
+#             instance.save()
 
-
+# signal to update the shopId of the shop owner user when a new shop is created
+@receiver(post_save, sender=Shop)
+def update_shopId_for_shop_owner(sender, instance, created, **kwargs):
+    print("Shop Signal called")
+    if created:
+        user = Custom_User.objects.get(id=instance.shopOwner.id)
+        user.shopId = instance
+        user.save()
