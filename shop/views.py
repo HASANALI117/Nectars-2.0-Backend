@@ -121,6 +121,21 @@ class ShopDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Shop.objects.all() 
     serializer_class = ShopSerializer
 
+class ShopDetailFromName(APIView):
+    serializer_class = ShopSerializer
+
+    def get(self, request, shopName):
+        try:
+            # shopName = self.kwargs['shopName']
+            queryset = Shop.objects.filter(shopName=shopName)
+            if not queryset:
+                return Response({'error': 'Shop not found.'}, status=400)
+            serializer = ShopSerializer(queryset, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({'error': str(e)}, status=400)
+
+
 #user Views: Custom_UserList, Custom_UserDetail
 class Custom_UserList(generics.ListAPIView):
     queryset = Custom_User.objects.all()

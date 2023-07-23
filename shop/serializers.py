@@ -19,7 +19,7 @@ class ProductSerializer(serializers.ModelSerializer):
     shopId = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Product
-        fields = ['productId', 'name', 'description', 'price', 'shopId', 'categoryId', 'created_at', 'updated_at']
+        fields = '__all__'
 
 class CategorySerializer(serializers.ModelSerializer):
     shopId = serializers.PrimaryKeyRelatedField(read_only=True)

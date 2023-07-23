@@ -82,6 +82,8 @@ class Product(models.Model):
         verbose_name=("Price"),
         error_messages={'required':"price field is required."},
         )
+    poster_image_url = models.URLField(max_length=200, verbose_name=("Poster Image URL"), error_messages={'required':"poster_image_url field is required."}, blank=True, null=True)
+    image_urls = models.JSONField(default=list, verbose_name=("Image URLs"), blank=True, null=True)
     shopId = models.ForeignKey("shop.Shop", verbose_name=("Shop ID"), on_delete=models.CASCADE)
     categoryId = models.ForeignKey("shop.Category", verbose_name=("Category ID"), on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
