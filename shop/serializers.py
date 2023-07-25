@@ -19,8 +19,6 @@ class ShopSerializer(serializers.ModelSerializer):
 
 
 class ShopPropsSerializer(serializers.ModelSerializer):
-    shopId = serializers.PrimaryKeyRelatedField(read_only=True)
-
     class Meta:
         model = ShopProps
         fields = "__all__"
